@@ -61,7 +61,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       children: <Widget>[
                         SizedBox(height: 25),
                         Text(
-                          "Register",
+                          "Register To Periodically Send Usage Data",
                           style: Theme.of(context).textTheme.headline2,
                         ),
                         SizedBox(height: 20),

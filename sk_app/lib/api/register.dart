@@ -6,15 +6,18 @@ import '../models/Register.dart';
 class RegisterAPI {
   Future<RegisterResponseModel> register(
       RegisterRequestModel requestModel) async {
-    var url = Uri.parse("https://10.0.2.2:5000/api/register");
-    final response = await http.post(url, body: requestModel.toJson());
-    if (response.statusCode == 200 || response.statusCode == 400) {
+      var url = Uri.parse("http://10.0.2.2:3000/api/register");
+      final respe = await http.post(url, body: requestModel.toJson());
+    // Map<String, dynamic> body = {"success": true, "error": null};
+    // Map<String, dynamic> response = {"statusCode": 200, "body": body};
+    if (response["statusCode"] == 200 || response["statusCode"] == 400) {
       final prefs = await SharedPreferences.getInstance();
       prefs.setString('email', requestModel.email);
 
-      return RegisterResponseModel.fromJson(
-        json.decode(response.body),
-      );
+      return Future.delayed(Duration(milliseconds: 4500)).then((onValue) =>
+          RegisterResponseModel(
+              success: response["body"]["success"].toString(),
+              error: response["body"]["error"].toString()));
     } else {
       throw Exception('Failed to load data!');
     }

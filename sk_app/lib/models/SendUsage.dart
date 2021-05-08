@@ -16,8 +16,9 @@ class SendUsageResponseModel {
 
 class SendUsageRequestModel {
   List<AppUsageInfo> data;
+  bool isInitial;
 
-  SendUsageRequestModel({this.data});
+  SendUsageRequestModel({this.data, this.isInitial});
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {'data': this.data};

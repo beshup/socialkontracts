@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:app_usage/app_usage.dart';
 import 'package:sk_app/api/send_usage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sk_app/models/SendUsage.dart';
@@ -12,62 +13,51 @@ class SendUsagePage extends StatefulWidget {
 }
 
 class _SendUsagePageState extends State<SendUsagePage> {
-  bool isApiCallProcess = false;
-  bool initialized = false;
-  SendUsageRequestModel registerRequestModel;
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+  List<AppUsageInfo> _infos = [];
+
   @override
   void initState() {
     super.initState();
-    registerRequestModel = new SendUsageRequestModel();
+  }
+
+  void getUsageStats() async {
+    try {
+      DateTime endDate = new DateTime.now();
+      DateTime startDate = endDate.subtract(Duration(hours: 24));
+      List<AppUsageInfo> infoList =
+          await AppUsage.getAppUsage(startDate, endDate);
+      setState(() {
+        _infos = infoList;
+      });
+
+      for (var info in infoList) {
+        debugPrint(info.toString());
+        print("dgjdjgn");
+      }
+    } on AppUsageException catch (exception) {
+      debugPrint(exception.toString());
+      print("fhgdjgnjn");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ProgressHUD(
-      child: _uiSetup(context),
-      inAsyncCall: isApiCallProcess,
-      opacity: 0.3,
-    );
-  }
-
-  Widget _uiSetup(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      backgroundColor: Theme.of(context).accentColor,
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            TextButton(
-                style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.blue),
-                  overlayColor: MaterialStateProperty.resolveWith<Color>(
-                    (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.hovered))
-                        return Colors.blue.withOpacity(0.04);
-                      if (states.contains(MaterialState.focused) ||
-                          states.contains(MaterialState.pressed))
-                        return Colors.blue.withOpacity(0.12);
-                      return null; // Defer to the widget's default.
-                    },
-                  ),
-                ),
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  var email = prefs.getString('email') ?? "";
-
-                  // here get usage stats
-                  // send to "initial report"
-                  // then set up background fetch to periodically send to /report
-
-                  if (initialized == false) {
-                    initialized = true;
-                  }
-                },
-                child: Text('TextButton'))
-          ],
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Usage'),
+          backgroundColor: Colors.red,
         ),
+        body: ListView.builder(
+            itemCount: _infos.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(_infos[index].appName),
+                trailing: Text(_infos[index].usage.toString()),
+              );
+            }),
+        floatingActionButton: FloatingActionButton(
+            onPressed: getUsageStats, child: Icon(Icons.file_download)),
       ),
     );
   }
