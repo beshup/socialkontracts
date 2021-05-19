@@ -1,3 +1,4 @@
 fbadmin.json
 
 node_modules/
+.env

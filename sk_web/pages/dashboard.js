@@ -178,11 +178,14 @@ function KontractView(kontract) {
 async function createStreak(data) {
   let r = await load()
 
+
   const userAddress = window.ethereum.selectedAddress
   const accounts = await window.web3.eth.getAccounts()
 
   let stake = data.stake
   r.methods.transfer("0x8dc0ef8e272c3758bffb59888594a7a02674d7b3", window.web3.utils.toWei(stake,'ether')).send({from:userAddress})
+  
+  data['userAddress'] = window.ethereum.selectedAddress
 
   return fetch('http://localhost:5000/createstream', {
     method: 'POST', 

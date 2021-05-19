@@ -6,8 +6,8 @@ import '../models/Register.dart';
 class RegisterAPI {
   Future<RegisterResponseModel> register(
       RegisterRequestModel requestModel) async {
-      var url = Uri.parse("http://10.0.2.2:3000/api/register");
-      final respe = await http.post(url, body: requestModel.toJson());
+    var url = Uri.parse("http://10.0.2.2:3000/api/register");
+    final response = await http.post(url, body: requestModel.toJson());
     // Map<String, dynamic> body = {"success": true, "error": null};
     // Map<String, dynamic> response = {"statusCode": 200, "body": body};
     if (response["statusCode"] == 200 || response["statusCode"] == 400) {
